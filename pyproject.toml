@@ -1,0 +1,54 @@
+[project]
+name = "Streamfinity-FastAPI"
+version = "1.0.0"
+authors = [
+  { name="Patrick Kalkman", email="patrick@simpletechture.nl" },
+]
+description = "Fastapi prototype for Streamfinity."
+readme = "README.md"
+
+[tool.black]
+line-length = 90
+
+[tool.pyright]
+useLibraryCodeForTypes = false
+typeCheckingMode = 'strict'
+stubPath = './typings'
+exclude = [
+    '**/__init__.py',
+    './typings',
+    ]
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+strictParameterNoneValue = true
+reportUntypedFunctionDecorator = "error"
+reportUntypedClassDecorator = "error"
+reportUntypedBaseClass = "error"
+reportUnusedClass = "error"
+reportUnnecessaryCast = "error"
+reportUnnecessaryComparison = "error"
+reportUnnecessaryContains = "error"
+reportUnnecessaryIsInstance = "error"
+reportImportCycles = "error"
+reportDuplicateImport = "error"
+
+[tool.isort]
+line_length = 90
+atomic = true
+profile = "black"
+skip_gitignore = true
+
+[tool.autoflake]
+check = true
+
+[tool.flake8]
+max-line-length = 90
+ignore = []
+per-file-ignores = []
+count = true
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+tests = []
+skips = []

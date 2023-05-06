@@ -1,0 +1,102 @@
+[
+  {
+    "title": "The Matrix",
+    "length": 136,
+    "synopsis": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
+    "release_year": 1999,
+    "director": "Lana Wachowski, Lilly Wachowski",
+    "genre": "Action, Sci-Fi",
+    "rating": null,
+    "id": 1
+  },
+  {
+    "title": "Inception",
+    "length": 148,
+    "synopsis": "A skilled thief is offered a chance to have his criminal history erased as payment for the implantation of another person's idea into a target's subconscious.",
+    "release_year": 2010,
+    "director": "Christopher Nolan",
+    "genre": "Action, Adventure, Sci-Fi",
+    "rating": null,
+    "id": 2
+  },
+  {
+    "title": "The Shawshank Redemption",
+    "length": 142,
+    "synopsis": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+    "release_year": 1994,
+    "director": "Frank Darabont",
+    "genre": "Drama",
+    "rating": null,
+    "id": 3
+  },
+  {
+    "title": "The Godfather",
+    "length": 175,
+    "synopsis": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+    "release_year": 1972,
+    "director": "Francis Ford Coppola",
+    "genre": "Crime, Drama",
+    "rating": null,
+    "id": 4
+  },
+  {
+    "title": "Pulp Fiction",
+    "length": 154,
+    "synopsis": "The lives of two mob hitmen, a boxer, a gangster's wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+    "release_year": 1994,
+    "director": "Quentin Tarantino",
+    "genre": "Crime, Drama",
+    "rating": null,
+    "id": 5
+  },
+  {
+    "title": "The Dark Knight",
+    "length": 152,
+    "synopsis": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+    "release_year": 2008,
+    "director": "Christopher Nolan",
+    "genre": "Action, Crime, Drama",
+    "rating": null,
+    "id": 6
+  },
+  {
+    "title": "Forrest Gump",
+    "length": 142,
+    "synopsis": "The presidencies of Kennedy and Johnson, the events of Vietnam, Watergate, and other historical events unfold through the perspective of an Alabama man with an IQ of 75.",
+    "release_year": 1994,
+    "director": "Robert Zemeckis",
+    "genre": "Drama, Romance",
+    "rating": null,
+    "id": 7
+  },
+  {
+    "title": "Fight Club",
+    "length": 139,
+    "synopsis": "An insomniac office worker and a devil-may-care soapmaker form an underground fight club that evolves into something much, much more.",
+    "release_year": 1999,
+    "director": "David Fincher",
+    "genre": "Drama",
+    "rating": null,
+    "id": 8
+  },
+  {
+    "title": "test movie",
+    "length": 120,
+    "synopsis": "een hele goede film",
+    "release_year": 1990,
+    "director": "Patrick",
+    "genre": "actie",
+    "rating": null,
+    "id": 9
+  },
+  {
+    "title": "The Matrix 86",
+    "length": 136,
+    "synopsis": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
+    "release_year": 1999,
+    "director": "Lana Wachowski, Lilly Wachowski",
+    "genre": "Action, Sci-Fi",
+    "rating": 8,
+    "id": 10
+  }
+]
