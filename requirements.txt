@@ -2,3 +2,4 @@ fastapi
 pydantic
 uvicorn
 sqlmodel
+httpx
