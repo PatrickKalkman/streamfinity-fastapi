@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, APIRouter
 from sqlmodel import Session, select
 from db import get_session
 
-from schemas import Movie, MovieInput
+from schemas.movie_actor_schema import MovieInput, Movie
 
 
 router = APIRouter(prefix="/api/movies")

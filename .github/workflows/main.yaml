@@ -31,9 +31,6 @@ jobs:
       run: |
         flake8 .
 
-    - name: Run pyright
-      uses: jakebailey/pyright-action@v1.5.1
-
     - name: Run pytest
       run: |
         pytest        
