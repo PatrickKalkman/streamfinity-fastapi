@@ -12,19 +12,6 @@ class MovieInput(SQLModel):
     genre: str
     rating: int | None = None
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "title": "The Matrix",
-                "length": 136,
-                "synopsis": "A computer hacker learns from mysterious rebels",
-                "release_year": 1999,
-                "director": "Lana Wachowski, Lilly Wachowski",
-                "genre": "Action, Sci-Fi",
-                "rating": 8,
-            }
-        }
-
 
 class MovieActorLink(SQLModel, table=True):
     movie_id: int = Field(foreign_key="movie.id",
