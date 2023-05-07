@@ -1,11 +1,11 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import Field, SQLModel
 
 
 class UserInput(SQLModel):
-    username: str
     email: str
     first_name: str
     last_name: str
+    password: str
     is_active: bool = True
 
 

@@ -1,12 +1,12 @@
 from typing import Any, Generator
-from fastapi import FastAPI
-import pytest
-from fastapi.testclient import TestClient
-from sqlmodel import create_engine, Session
 
-from schemas.movie_actor_schema import MovieInput, Movie
+import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from sqlmodel import Session, create_engine
 
 from routers import movies
+from schemas.movie_actor_schema import Movie, MovieInput
 
 TEST_DB_URL = "sqlite:///./test.db"
 

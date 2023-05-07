@@ -1,11 +1,10 @@
 from datetime import date
 
-from fastapi import Depends, HTTPException, APIRouter, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
+
 from db import get_session
-
 from schemas.movie_actor_schema import Actor, ActorInput
-
 
 router = APIRouter(prefix="/api/actors")
 

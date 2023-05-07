@@ -1,9 +1,8 @@
-from fastapi import Depends, HTTPException, APIRouter
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
+
 from db import get_session
-
-from schemas.movie_actor_schema import MovieInput, Movie
-
+from schemas.movie_actor_schema import Actor, Movie, MovieActorLink, MovieInput
 
 router = APIRouter(prefix="/api/movies")
 
@@ -61,3 +60,40 @@ def update_movie(movie_id: int, new_movie: MovieInput,
         return movie
     else:
         raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+
+
+@router.post("/{movie_id}/actors/{actor_id}", status_code=204)
+def add_actor_to_movie(movie_id: int, actor_id: int,
+                       session: Session = Depends(get_session)) -> None:
+    movie: Movie | None = session.get(Movie, movie_id)
+    if not movie:
+        raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+
+    actor: Actor | None = session.get(Actor, actor_id)
+    if not actor:
+        raise HTTPException(status_code=404, detail=f"Actor with id={actor_id} not found")
+
+    link = MovieActorLink(movie_id=movie_id, actor_id=actor_id)
+    session.add(link)
+    session.commit()
+
+
+@router.delete("/{movie_id}/actors/{actor_id}", status_code=204)
+def remove_actor_from_movie(movie_id: int, actor_id: int,
+                            session: Session = Depends(get_session)) -> None:
+    movie: Movie | None = session.get(Movie, movie_id)
+    if not movie:
+        raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+
+    actor: Actor | None = session.get(Actor, actor_id)
+    if not actor:
+        raise HTTPException(status_code=404, detail=f"Actor with id={actor_id} not found")
+
+    link: MovieActorLink | None = session.get(MovieActorLink, (movie_id, actor_id))
+    if not link:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Actor {actor_id} not associated with movie {movie_id}")
+
+    session.delete(link)
+    session.commit()

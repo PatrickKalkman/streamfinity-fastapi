@@ -3,13 +3,13 @@ from fastapi import FastAPI
 from sqlmodel import SQLModel
 
 from db import engine
-from routers import movies, actors, subscriptions
-
+from routers import actors, movies, subscriptions, users
 
 app = FastAPI(title="Streamfinity API", version="0.1.0")
 app.include_router(movies.router)
 app.include_router(actors.router)
 app.include_router(subscriptions.router)
+app.include_router(users.router)
 
 
 @app.on_event("startup")

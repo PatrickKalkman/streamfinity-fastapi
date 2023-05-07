@@ -1,7 +1,7 @@
-from fastapi import Depends, HTTPException, APIRouter, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
-from db import get_session
 
+from db import get_session
 from schemas.subscription_schema import Subscription, SubscriptionInput
 
 router = APIRouter(prefix="/api/subscriptions")

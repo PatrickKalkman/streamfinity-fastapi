@@ -1,5 +1,6 @@
-from sqlmodel import SQLModel, Field
 from datetime import date
+
+from sqlmodel import Field, SQLModel
 
 
 class SubscriptionInput(SQLModel):

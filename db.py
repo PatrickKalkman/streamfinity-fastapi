@@ -1,6 +1,6 @@
 from typing import Any, Generator
-from sqlmodel import Session, create_engine
 
+from sqlmodel import Session, create_engine
 
 engine = create_engine(
     "sqlite:///./db/streamfinity.db",

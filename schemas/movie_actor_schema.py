@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class MovieInput(SQLModel):
@@ -24,6 +24,11 @@ class Movie(MovieInput, table=True):
     id: int | None = Field(primary_key=True, default=None)
     actors: list["Actor"] = Relationship(back_populates="movies",
                                          link_model=MovieActorLink)
+
+
+class MovieOutput(MovieInput):
+    id: int
+    actors: list["Actor"] = []
 
 
 class ActorInput(SQLModel):

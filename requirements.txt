@@ -3,3 +3,5 @@ pydantic
 uvicorn
 sqlmodel
 httpx
+python-jose[cryptography]
+passlib[bcrypt]

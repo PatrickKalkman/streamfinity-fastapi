@@ -39,15 +39,6 @@ atomic = true
 profile = "black"
 skip_gitignore = true
 
-[tool.autoflake]
-check = true
-
-[tool.flake8]
-max-line-length = 90
-ignore = []
-per-file-ignores = []
-count = true
-
 [tool.bandit]
 exclude_dirs = ["tests"]
 tests = []
