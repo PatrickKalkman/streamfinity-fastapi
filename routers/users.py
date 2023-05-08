@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 
 from db import get_session
@@ -14,7 +14,8 @@ def get_user(user_id: int, session: Session = Depends(get_session)) -> User:
     if user:
         return user
 
-    raise HTTPException(status_code=404, detail=f"User with id={user_id} not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"User with id={user_id} not found")
 
 
 @router.get("/")
@@ -47,7 +48,8 @@ def delete_user(user_id: int, session: Session = Depends(get_session)) -> None:
         session.delete(user)
         session.commit()
     else:
-        raise HTTPException(status_code=404, detail=f"User with id={user_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"User with id={user_id} not found")
 
 
 @router.put("/{user_id}", response_model=User)

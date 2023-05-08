@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from db import get_session
@@ -23,7 +23,8 @@ def get_movie(movie_id: int,
     if movie:
         return movie
 
-    raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Movie with id={movie_id} not found")
 
 
 @router.post("/", response_model=Movie)
@@ -44,7 +45,8 @@ def delete_movie(movie_id: int,
         session.delete(movie)
         session.commit()
     else:
-        raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Movie with id={movie_id} not found")
 
 
 @router.put("/{movie_id}", response_model=Movie)
@@ -59,7 +61,8 @@ def update_movie(movie_id: int, new_movie: MovieInput,
         session.commit()
         return movie
     else:
-        raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Movie with id={movie_id} not found")
 
 
 @router.post("/{movie_id}/actors/{actor_id}", status_code=204)
@@ -67,11 +70,13 @@ def add_actor_to_movie(movie_id: int, actor_id: int,
                        session: Session = Depends(get_session)) -> None:
     movie: Movie | None = session.get(Movie, movie_id)
     if not movie:
-        raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Movie with id={movie_id} not found")
 
     actor: Actor | None = session.get(Actor, actor_id)
     if not actor:
-        raise HTTPException(status_code=404, detail=f"Actor with id={actor_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Actor with id={actor_id} not found")
 
     link = MovieActorLink(movie_id=movie_id, actor_id=actor_id)
     session.add(link)
@@ -83,11 +88,13 @@ def remove_actor_from_movie(movie_id: int, actor_id: int,
                             session: Session = Depends(get_session)) -> None:
     movie: Movie | None = session.get(Movie, movie_id)
     if not movie:
-        raise HTTPException(status_code=404, detail=f"Movie with id={movie_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Movie with id={movie_id} not found")
 
     actor: Actor | None = session.get(Actor, actor_id)
     if not actor:
-        raise HTTPException(status_code=404, detail=f"Actor with id={actor_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Actor with id={actor_id} not found")
 
     link: MovieActorLink | None = session.get(MovieActorLink, (movie_id, actor_id))
     if not link:

@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 
 from db import get_session
@@ -16,7 +16,8 @@ def get_actor(actor_id: int,
     if actor:
         return actor
 
-    raise HTTPException(status_code=404, detail=f"Actor with id={actor_id} not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Actor with id={actor_id} not found")
 
 
 @router.get("/")
@@ -55,7 +56,8 @@ def delete_actor(actor_id: int,
         session.delete(actor)
         session.commit()
     else:
-        raise HTTPException(status_code=404, detail=f"Actor with id={actor_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Actor with id={actor_id} not found")
 
 
 @router.put("/{actor_id}", response_model=Actor)
@@ -69,4 +71,5 @@ def update_actor(actor_id: int, new_actor: ActorInput,
         session.commit()
         return actor
     else:
-        raise HTTPException(status_code=404, detail=f"Actor with id={actor_id} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Actor with id={actor_id} not found")

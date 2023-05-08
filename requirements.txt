@@ -5,3 +5,4 @@ sqlmodel
 httpx
 python-jose[cryptography]
 passlib[bcrypt]
+python-decouple

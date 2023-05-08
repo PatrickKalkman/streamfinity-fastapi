@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 
 from db import get_session
@@ -14,7 +14,7 @@ def get_subscription(subscription_id: int,
     if subscription:
         return subscription
 
-    raise HTTPException(status_code=404,
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                         detail=f"Subscription with id={subscription_id} not found")
 
 
@@ -50,7 +50,7 @@ def delete_subscription(subscription_id: int,
         session.delete(subscription)
         session.commit()
     else:
-        raise HTTPException(status_code=404,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Subscription with id={subscription_id} not found")
 
 
@@ -65,5 +65,5 @@ def update_subscription(subscription_id: int, new_subscription: SubscriptionInpu
         session.commit()
         return subscription
     else:
-        raise HTTPException(status_code=404,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Subscription with id={subscription_id} not found")
