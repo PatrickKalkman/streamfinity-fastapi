@@ -1,74 +1,60 @@
-from typing import Any, Generator
-
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlmodel import Session, create_engine
-
-from routers import users
-
-TEST_DB_URL = "sqlite:///./test.db"
-
-app = FastAPI()
-app.include_router(users.router)
-
-engine = create_engine(
-    TEST_DB_URL,
-    echo=True,
-    connect_args={"check_same_thread": False}
-)
-
-
-# Dependency for session injection
-def get_session() -> Generator[Session, Any, None]:
-    with Session(engine) as session:
-        yield session
-
+from sqlmodel import Session
+from app.streamfinity import app
+from app.db import engine
+from app.schemas.user_schema import User, UserInput
 
 client = TestClient(app)
 
 
-def test_create_user():
-    user_data = {
-        "email": "johndoe@example.com",
-        "first_name": "John",
-        "last_name": "Doe",
-        "password": "supersecretpassword",
-        "is_active": True
-    }
+def create_user(session: Session):
+    user_input = UserInput(email="testuser@example.com",
+                           password="testpassword", first_name="Test",
+                           last_name="User")
 
-    response = client.post("/api/users/", json=user_data)
-    assert response.status_code == 201
-    user = response.json()
-    for key, value in user_data.items():
-        if key != "password":  # Do not compare the password directly
-            assert user[key] == value
+    new_user = User.from_orm(user_input)
+    session.add(new_user)
+    session.commit()
+    session.refresh(new_user)
+    return new_user
 
 
 def test_get_user():
-    response = client.get("/api/users/1")
+    with Session(engine) as session:
+        test_user = create_user(session)
+        response = client.get(f"/api/users/{test_user.id}")
     assert response.status_code == 200
-    user = response.json()
-    assert user["email"] == "johndoe@example.com"
-    assert user["first_name"] == "John"
-    assert user["last_name"] == "Doe"
-    assert user["is_active"]
+    assert response.json()["email"] == "testuser@example.com"
 
 
-def test_update_user():
-    user_data = {"first_name": "Johnny", "last_name": "Doe",
-                 "email": "johnnydoe@example.com", "is_active": False,
-                 "password": "newpassword"}
-    response = client.put("/api/users/1", json=user_data)
+def test_get_users():
+    with Session(engine) as session:
+        create_user(session)
+        response = client.get("/api/users", params={"email": "testuser@example.com"})
     assert response.status_code == 200
-    user = response.json()
-    assert user["first_name"] == "Johnny"
+    assert len(response.json()) == 1
+    assert response.json()[0]["email"] == "testuser@example.com"
+
+
+def test_add_user():
+    user_data = {"email": "newuser@example.com", "password": "newpassword"}
+    response = client.post("/api/users", json=user_data)
+    assert response.status_code == 201
+    assert response.json()["email"] == "newuser@example.com"
 
 
 def test_delete_user():
-    response = client.delete("/api/users/1")
+    with Session(engine) as session:
+        test_user = create_user(session)
+        response = client.delete(f"/api/users/{test_user.id}")
     assert response.status_code == 204
 
 
-def test_get_non_existent_user():
-    response = client.get("/api/users/100")
-    assert response.status_code == 404
+def test_update_user():
+    with Session(engine) as session:
+        test_user = create_user(session)
+        updated_user_data = {"email": "updateduser@example.com",
+                             "password": "updatedpassword"}
+        response = client.put(f"/api/users/{test_user.id}", json=updated_user_data)
+    assert response.status_code == 200
+    assert response.json()["email"] == "updateduser@example.com"

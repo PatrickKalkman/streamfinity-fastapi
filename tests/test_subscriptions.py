@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlmodel import Session, create_engine
 
-from routers import subscriptions
+from app.routers import subscriptions
 
 TEST_DB_URL = "sqlite:///./test.db"
 

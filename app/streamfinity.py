@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from sqlmodel import SQLModel
 
-from db import engine
+from db import get_engine
 from routers import actors, movies, subscriptions, token, users
 
 app = FastAPI(title="Streamfinity API", version="0.1.0")
@@ -11,6 +11,8 @@ app.include_router(actors.router)
 app.include_router(subscriptions.router)
 app.include_router(users.router)
 app.include_router(token.router)
+
+engine = get_engine()
 
 
 @app.on_event("startup")

@@ -5,8 +5,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlmodel import Session, create_engine
 
-from routers import movies
-from schemas.movie_actor_schema import Movie, MovieInput
+from app.routers import movies
+from app.schemas.movie_actor_schema import Movie, MovieInput
 
 TEST_DB_URL = "sqlite:///./test.db"
 

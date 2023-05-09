@@ -10,7 +10,7 @@ from schemas.token_schema import Token
 from schemas.user_schema import User
 from security.hashing import create_access_token, verify_password
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 3000000
 
 router = APIRouter(prefix="/api")
 

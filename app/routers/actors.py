@@ -3,8 +3,10 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 
-from db import get_session
+from db import get_session  # type: ignore
 from schemas.movie_actor_schema import Actor, ActorInput
+from schemas.user_schema import User
+from security.hashing import get_current_user
 
 router = APIRouter(prefix="/api/actors")
 
@@ -40,6 +42,7 @@ def get_actors(name: str | None = Query(None),
 
 @router.post("/", response_model=Actor, status_code=201)
 def add_actor(actor_input: ActorInput,
+              current_user: User = Depends(get_current_user),
               session: Session = Depends(get_session)) -> Actor:
     new_actor: Actor = Actor.from_orm(actor_input)
     session.add(new_actor)
