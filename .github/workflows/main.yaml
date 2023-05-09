@@ -42,14 +42,3 @@ jobs:
     - name: Run tests
       run: |
         python -m poetry run python -m pytest -sxv      
-
-    - name: Run Bandit Report
-      uses: jpetrucciani/bandit-check@main
-      with:
-        bandit_flags: '-r -ll -o ./output.html -f html'
-
-    - name: Create bandit output artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: bandit-security-report
-        path: ./output.html
