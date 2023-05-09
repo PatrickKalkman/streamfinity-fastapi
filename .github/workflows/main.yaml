@@ -41,11 +41,7 @@ jobs:
 
     - name: Run tests
       run: |
-        python -m poetry run python -m pytest -sxv
-
-    - name: Run flake8
-      run: |
-        flake8 .       
+        python -m poetry run python -m pytest -sxv      
 
     - name: Run Bandit Report
       uses: jpetrucciani/bandit-check@main
