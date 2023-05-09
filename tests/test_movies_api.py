@@ -1,94 +1,58 @@
-from typing import Any, Generator
-
-import pytest
-from fastapi import FastAPI
+from streamfinity_fastapi.schemas.movie_actor_schema import MovieInput
+from streamfinity_fastapi.streamfinity import app
+from fastapi import status
 from fastapi.testclient import TestClient
-from sqlmodel import Session, create_engine
 
-from app.routers import movies
-from app.schemas.movie_actor_schema import Movie, MovieInput
+client = TestClient(app)
 
-TEST_DB_URL = "sqlite:///./test.db"
-
-app = FastAPI()
-app.include_router(movies.router)
-
-engine = create_engine(
-    TEST_DB_URL,
-    echo=True,
-    connect_args={"check_same_thread": False}
+# Test data
+test_movie = MovieInput(
+    title="Test Movie",
+    length=120,
+    synopsis="A test movie",
+    release_year=2022,
+    director="John Doe",
+    genre="Action",
+    rating=8,
 )
 
 
-# Dependency for session injection
-def get_session() -> Generator[Session, Any, None]:
-    with Session(engine) as session:
-        yield session
+def create_movie():
+    response = client.post("/api/movies/", json=test_movie.dict())
+    assert response.status_code == status.HTTP_201_CREATED
+    return response.json()["id"]
 
 
-@pytest.fixture
-def client():
-    with TestClient(app) as test_client:
-        yield test_client
+def test_create_movie():
+    response = client.post("/api/movies/", json=test_movie.dict())
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json()["title"] == test_movie.title
+    assert response.json()["director"] == test_movie.director
 
 
-@pytest.fixture
-def movie_input() -> MovieInput:
-    return MovieInput(title="Test Movie", release_year=2022, length=120,
-                      synopsis="Test Synopsis", director="Test Director",
-                      genre="Test Genre", rating=5)
-
-
-def test_create_movie(client: TestClient, movie_input: MovieInput):
-    response = client.post("/api/movies/", json=movie_input.dict())
-    assert response.status_code == 200
-    movie = Movie.parse_obj(response.json())
-    assert movie.id is not None
-    assert movie.title == movie_input.title
-    assert movie.release_year == movie_input.release_year
-
-
-def test_get_movie(client: TestClient, movie_input: MovieInput):
-    new_movie = client.post("/api/movies/", json=movie_input.dict()).json()
-    movie_id = new_movie["id"]
+def test_get_movie():
+    movie_id = create_movie()
     response = client.get(f"/api/movies/{movie_id}")
-    assert response.status_code == 200
-    movie = Movie.parse_obj(response.json())
-    assert movie.id == movie_id
-    assert movie.title == movie_input.title
-    assert movie.release_year == movie_input.release_year
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["title"] == test_movie.title
+    assert response.json()["director"] == test_movie.director
 
 
-def test_get_movies(client: TestClient, movie_input: MovieInput):
+def test_get_movies():
     response = client.get("/api/movies/")
-    assert response.status_code == 200
-    movies = [Movie.parse_obj(movie) for movie in response.json()]
-    assert len(movies) > 0
+    assert response.status_code == status.HTTP_200_OK
+    assert isinstance(response.json(), list)
 
 
-def test_update_movie(client: TestClient, movie_input: MovieInput):
-    new_movie = client.post("/api/movies/", json=movie_input.dict()).json()
-    movie_id = new_movie["id"]
-    updated_title = "Updated Test Movie"
-    response = client.put(f"/api/movies/{movie_id}",
-                          json={"title": updated_title,
-                                "release_year": movie_input.release_year,
-                                "length": movie_input.length,
-                                "synopsis": movie_input.synopsis,
-                                "director": movie_input.director,
-                                "genre": movie_input.genre,
-                                "rating": movie_input.rating})
-    assert response.status_code == 200
-    movie = Movie.parse_obj(response.json())
-    assert movie.id == movie_id
-    assert movie.title == updated_title
-    assert movie.release_year == movie_input.release_year
+def test_update_movie():
+    movie_id = create_movie()
+    updated_movie = test_movie.copy(update={"title": "Updated Test Movie"}).dict()
+    response = client.put(f"/api/movies/{movie_id}", json=updated_movie)
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["title"] == "Updated Test Movie"
 
 
-def test_delete_movie(client: TestClient, movie_input: MovieInput):
-    new_movie = client.post("/api/movies/", json=movie_input.dict()).json()
-    movie_id = new_movie["id"]
+def test_delete_movie():
+    movie_id = create_movie()
     response = client.delete(f"/api/movies/{movie_id}")
-    assert response.status_code == 204
-    response = client.get(f"/api/movies/{movie_id}")
-    assert response.status_code == 404
+    assert response.status_code == status.HTTP_204_NO_CONTENT

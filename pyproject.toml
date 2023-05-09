@@ -1,11 +1,26 @@
-[project]
-name = "Streamfinity-FastAPI"
-version = "1.0.0"
-authors = [
-  { name="Patrick Kalkman", email="patrick@simpletechture.nl" },
-]
-description = "Fastapi prototype for Streamfinity."
+[tool.poetry]
+name = "streamfinity-fastapi"
+version = "0.1.0"
+description = "Streamfinity's prototype REST API"
+authors = ["Patrick Kalkman <patrick@simpletechture.nl>"]
 readme = "README.md"
+packages = [{include = "streamfinity_fastapi"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.1"
+sqlmodel = "^0.0.8"
+python-decouple = "^3.8"
+uvicorn = "^0.22.0"
+passlib = "^1.7.4"
+python-jose = "^3.3.0"
+python-multipart = "^0.0.6"
+bcrypt = "^4.0.1"
+httpx = "^0.24.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 90

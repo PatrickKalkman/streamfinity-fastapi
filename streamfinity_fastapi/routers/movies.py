@@ -1,8 +1,8 @@
+from streamfinity_fastapi.db import get_session
 from fastapi import APIRouter, Depends, HTTPException, status
+from streamfinity_fastapi.schemas.movie_actor_schema import Actor, Movie
+from streamfinity_fastapi.schemas.movie_actor_schema import MovieActorLink, MovieInput
 from sqlmodel import Session, select
-
-from db import get_session
-from schemas.movie_actor_schema import Actor, Movie, MovieActorLink, MovieInput
 
 router = APIRouter(prefix="/api/movies")
 
@@ -27,7 +27,7 @@ def get_movie(movie_id: int,
                         detail=f"Movie with id={movie_id} not found")
 
 
-@router.post("/", response_model=Movie)
+@router.post("/", response_model=Movie, status_code=201)
 def add_movie(movie_input: MovieInput,
               session: Session = Depends(get_session)) -> Movie:
     new_movie: Movie = Movie.from_orm(movie_input)

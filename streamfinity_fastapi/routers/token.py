@@ -1,14 +1,13 @@
 from datetime import timedelta
 from typing import Annotated
 
+from streamfinity_fastapi.db import get_session
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from streamfinity_fastapi.schemas.token_schema import Token
+from streamfinity_fastapi.schemas.user_schema import User
+from streamfinity_fastapi.security.hashing import create_access_token, verify_password
 from sqlmodel import Session, select
-
-from db import get_session
-from schemas.token_schema import Token
-from schemas.user_schema import User
-from security.hashing import create_access_token, verify_password
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 3000000
 

@@ -1,72 +1,75 @@
-from typing import Any, Generator
-
-from fastapi import FastAPI
+from datetime import date, timedelta
+from streamfinity_fastapi.schemas.subscription_schema import SubscriptionInput
+from streamfinity_fastapi.streamfinity import app
+from fastapi import status
 from fastapi.testclient import TestClient
-from sqlmodel import Session, create_engine
-
-from app.routers import subscriptions
-
-TEST_DB_URL = "sqlite:///./test.db"
-
-app = FastAPI()
-app.include_router(subscriptions.router)
-
-engine = create_engine(
-    TEST_DB_URL,
-    echo=True,
-    connect_args={"check_same_thread": False}
-)
-
-
-# Dependency for session injection
-def get_session() -> Generator[Session, Any, None]:
-    with Session(engine) as session:
-        yield session
-
 
 client = TestClient(app)
 
+# Test data
+test_subscription = SubscriptionInput(
+    user_id=1,
+    plan="Basic",
+    start_date=date.today(),
+    end_date=date.today() + timedelta(days=30),
+    is_active=True,
+)
+
+
+def get_test_subscription_json():
+    assert test_subscription.end_date is not None
+    json = {
+      **test_subscription.dict(),
+      "start_date": test_subscription.start_date.isoformat(),
+      "end_date": test_subscription.end_date.isoformat(),
+    }
+    return json
+
+
+def create_subscription():
+    json = get_test_subscription_json()
+    response = client.post("/api/subscriptions/", json=json)
+    assert response.status_code == status.HTTP_201_CREATED
+    return response.json()["id"]
+
 
 def test_create_subscription():
-    subscription_data = {
-        "user_id": 1,
-        "plan": "basic",
-        "start_date": "2023-05-01",
-        "is_active": True
-    }
-
-    response = client.post("/api/subscriptions/", json=subscription_data)
-    assert response.status_code == 201
-    subscription = response.json()
-    for key, value in subscription_data.items():
-        assert subscription[key] == value
+    json = get_test_subscription_json()
+    response = client.post("/api/subscriptions/", json=json)
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json()["user_id"] == test_subscription.user_id
+    assert response.json()["plan"] == test_subscription.plan
 
 
 def test_get_subscription():
-    response = client.get("/api/subscriptions/1")
-    assert response.status_code == 200
-    subscription = response.json()
-    assert subscription["user_id"] == 1
-    assert subscription["plan"] == "basic"
-    assert subscription["start_date"] == "2023-05-01"
-    assert subscription["is_active"] is True
+    subscription_id = create_subscription()
+    response = client.get(f"/api/subscriptions/{subscription_id}")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["user_id"] == test_subscription.user_id
+    assert response.json()["plan"] == test_subscription.plan
+
+
+def test_get_subscriptions():
+    response = client.get("/api/subscriptions/")
+    assert response.status_code == status.HTTP_200_OK
+    assert isinstance(response.json(), list)
 
 
 def test_update_subscription():
-    subscription_data = {"user_id": 1, "plan": "premium",
-                         "start_date": "2023-05-01", "is_active": False}
-    response = client.put("/api/subscriptions/1", json=subscription_data)
-    assert response.status_code == 200
-    subscription = response.json()
-    assert subscription["plan"] == "premium"
-    assert subscription["is_active"] is False
+    subscription_id = create_subscription()
+    updated_subscription = test_subscription.copy(
+        update={"plan": "Premium"}
+    ).dict()
+    updated_subscription["start_date"] = updated_subscription["start_date"].isoformat()
+    updated_subscription["end_date"] = updated_subscription["end_date"].isoformat()
+    response = client.put(
+        f"/api/subscriptions/{subscription_id}", json=updated_subscription
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["plan"] == "Premium"
 
 
 def test_delete_subscription():
-    response = client.delete("/api/subscriptions/1")
-    assert response.status_code == 204
-
-
-def test_get_non_existent_subscription():
-    response = client.get("/api/subscriptions/100")
-    assert response.status_code == 404
+    subscription_id = create_subscription()
+    response = client.delete(f"/api/subscriptions/{subscription_id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT

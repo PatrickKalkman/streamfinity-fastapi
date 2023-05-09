@@ -1,8 +1,8 @@
+from streamfinity_fastapi.db import get_session
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from streamfinity_fastapi.schemas.subscription_schema import Subscription
+from streamfinity_fastapi.schemas.subscription_schema import SubscriptionInput
 from sqlmodel import Session, select
-
-from db import get_session
-from schemas.subscription_schema import Subscription, SubscriptionInput
 
 router = APIRouter(prefix="/api/subscriptions")
 

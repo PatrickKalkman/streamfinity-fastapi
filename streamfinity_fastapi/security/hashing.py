@@ -2,18 +2,14 @@
 from datetime import datetime, timedelta
 from typing import Dict
 
+from streamfinity_fastapi.db import get_session
 from decouple import config
-from passlib.context import CryptContext
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-
-from sqlmodel import select, Session
-
-from db import get_session
-from schemas.user_schema import User
-
+from passlib.context import CryptContext
+from streamfinity_fastapi.schemas.user_schema import User
+from sqlmodel import Session, select
 
 SECRET_KEY: str = config('SECRET_KEY', cast=str, default='secret')
 ALGORITHM: str = config('ALGORITHM', cast=str, default='HS256')

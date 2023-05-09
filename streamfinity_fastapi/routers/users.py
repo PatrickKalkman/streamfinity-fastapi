@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 
-from db import get_session
-from schemas.user_schema import User, UserInput
-from security.hashing import get_password_hash
+from streamfinity_fastapi.db import get_session
+from streamfinity_fastapi.schemas.user_schema import User, UserInput
+from streamfinity_fastapi.security.hashing import get_password_hash
 
 router = APIRouter(prefix="/api/users")
 
