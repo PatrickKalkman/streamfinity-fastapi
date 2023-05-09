@@ -30,7 +30,7 @@ jobs:
         python -m poetry config virtualenvs.in-project true
 
     - name: Cache the virtualenv
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ./.venv
         key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
@@ -41,4 +41,4 @@ jobs:
 
     - name: Run tests
       run: |
-        python -m poetry run python -m pytest -sxv      
+        python -m poetry run python -m pytest -sxv
