@@ -26,6 +26,10 @@ def get_actor(actor_id: int,
 def get_actors(name: str | None = Query(None),
                birthdate: date | None = Query(None),
                nationality: str | None = Query(None),
+               skip: int = Query(0, description="The number of records to skip"),
+               limit: int = Query(10, description="The maximum nr of records to get"),
+               sort: str = Query("id", description="The field to sort the results by"),
+               order: str = Query("asc", description="The sort order: 'asc' or 'desc'"),
                session: Session = Depends(get_session)) -> list[Actor]:
 
     query = select(Actor)
@@ -36,6 +40,15 @@ def get_actors(name: str | None = Query(None),
         query = query.where(Actor.date_of_birth == birthdate)
     if nationality:
         query = query.where(Actor.nationality == nationality)
+
+    # Sorting
+    if order.lower() == "desc":
+        query = query.order_by(getattr(Actor, sort).desc())
+    else:
+        query = query.order_by(getattr(Actor, sort))
+
+    # Pagination
+    query = query.offset(skip).limit(limit)
 
     return session.exec(query).all()
 
