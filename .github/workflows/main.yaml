@@ -52,7 +52,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t streamfinity-api:${{ steps.increment_version.outputs.version }} .
+        docker build -t pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }} .
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
@@ -62,4 +62,4 @@ jobs:
 
     - name: Push Docker image
       run: |
-        docker push streamfinity-api:${{ steps.increment_version.outputs.version }}
+        docker push pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }}
