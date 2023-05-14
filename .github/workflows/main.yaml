@@ -24,43 +24,66 @@ jobs:
     - name: Install poetry
       run: |
         python -m pip install poetry==1.4.2
+        echo "Installed poetry"
 
     - name: Configure poetry
       run: |
         python -m poetry config virtualenvs.in-project true
+        echo "Configured poetry"
 
     - name: Cache the virtualenv
       uses: actions/cache@v2
       with:
         path: ./.venv
         key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
-
-    - name: Install dependencies
+      env:
+        cache-hit: ${{ steps.cache.outputs.cache-hit }}
       run: |
-        python -m poetry install
+        echo "Cached the virtualenv"
+        if [[ -z "${{ env.cache-hit }}" ]]; then
+          python -m poetry install
+          echo "Installed dependencies"
+        fi
 
     - name: Get current version
       id: get_version
-      run: echo "::set-output name=version::$(grep -oP '(?<=^ENV VERSION ).*' Dockerfile)"
+      run: |
+        echo "Getting current version"
+        version=$(grep -oP '(?<=^ENV VERSION ).*' Dockerfile)
+        echo "Current version: $version"
+        echo "::set-output name=version::$version"
 
     - name: Increment version
       id: increment_version
-      run: echo "::set-output name=version::$(python -c "import semver; print(semver.bump_patch('${{ steps.get_version.outputs.version }}'))")"
+      run: |
+        echo "Incrementing version"
+        version=${{ steps.get_version.outputs.version }}
+        new_version=$(python -c "import semver; print(semver.bump_patch('$version'))")
+        echo "New version: $new_version"
+        echo "::set-output name=version::$new_version"
 
     - name: Update Dockerfile
-      run: sed -i "s/ENV VERSION .*/ENV VERSION ${{ steps.increment_version.outputs.version }}/g" Dockerfile
+      run: |
+        echo "Updating Dockerfile"
+        sed -i "s/ENV VERSION .*/ENV VERSION ${{ steps.increment_version.outputs.version }}/g" Dockerfile
 
     - name: Build Docker image
       run: |
-        docker build -t pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }} .
-        docker tag pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }} pkalkman/streamfinity-api:latest
+        echo "Building Docker image"
+        tag=pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }}
+        docker build -t $tag .
+        docker tag $tag pkalkman/streamfinity-api:latest
+        echo "Docker image tag: $tag"
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        echo "Logged in to Docker Hub"
 
     - name: Push Docker image
       run: |
+        echo "Pushing Docker image"
         docker push pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }}
