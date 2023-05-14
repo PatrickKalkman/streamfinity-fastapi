@@ -54,14 +54,6 @@ jobs:
     - name: Update Dockerfile
       run: sed -i "s/ENV VERSION .*/ENV VERSION ${{ steps.increment_version.outputs.version }}/g" Dockerfile
 
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git commit -m "Update Dockerfile with new version [ci skip]" -- Dockerfile
-        git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/PatrickKalkman/streamfinity-fastapi.git
-        git push
-
     - name: Build Docker image
       run: |
         docker build -t pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }} .
