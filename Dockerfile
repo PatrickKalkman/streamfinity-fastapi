@@ -1,4 +1,6 @@
 FROM python:3.11-alpine as requirements-stage
+
+ENV VERSION 1.0.0
  
 WORKDIR /tmp
 

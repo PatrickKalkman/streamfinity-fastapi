@@ -39,9 +39,20 @@ jobs:
       run: |
         python -m poetry install
 
+    - name: Get current version
+      id: get_version
+      run: echo "::set-output name=version::$(grep -oP '(?<=^ENV VERSION ).*' Dockerfile)"
+
+    - name: Increment version
+      id: increment_version
+      run: echo "::set-output name=version::$(python -c "import semver; print(semver.bump_patch('${{ steps.get_version.outputs.version }}'))")"
+
+    - name: Update Dockerfile
+      run: sed -i "s/ENV VERSION .*/ENV VERSION ${{ steps.increment_version.outputs.version }}/g" Dockerfile
+
     - name: Build Docker image
       run: |
-        docker build -t streamfinity-api:v1.0.0-beta .
+        docker build -t streamfinity-api:${{ steps.increment_version.outputs.version }} .
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
@@ -51,4 +62,4 @@ jobs:
 
     - name: Push Docker image
       run: |
-        docker push streamfinity-api:v1.0.0-beta
+        docker push streamfinity-api:${{ steps.increment_version.outputs.version }}
