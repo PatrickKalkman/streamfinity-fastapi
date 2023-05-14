@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamfinity-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: streamfinity-api
+  template:
+    metadata:
+      labels:
+        app: streamfinity-api
+    spec:
+      containers:
+      - name: streamfinity-api
+        image: streamfinity-api:v1.0.0-beta
+        ports:
+        - containerPort: 8000

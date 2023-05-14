@@ -8,7 +8,7 @@ is_testing = os.environ.get("TESTING")
 if is_testing:
     database_url = "sqlite:///./tests/db/streamfinity_test.db"
 else:
-    database_url = "sqlite:///./db/streamfinity.db"
+    database_url = "sqlite:///./streamfinity_fastapi/db/streamfinity.db"
 
 
 engine = create_engine(
