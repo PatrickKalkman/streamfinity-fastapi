@@ -54,6 +54,13 @@ jobs:
     - name: Update Dockerfile
       run: sed -i "s/ENV VERSION .*/ENV VERSION ${{ steps.increment_version.outputs.version }}/g" Dockerfile
 
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m "Update Dockerfile with new version [ci skip]" -- Dockerfile
+        git push
+
     - name: Build Docker image
       run: |
         docker build -t pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }} .
@@ -68,3 +75,4 @@ jobs:
     - name: Push Docker image
       run: |
         docker push pkalkman/streamfinity-api:${{ steps.increment_version.outputs.version }}
+        docker push pkalkman/streamfinity-api:latest
